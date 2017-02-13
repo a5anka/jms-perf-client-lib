@@ -1,0 +1,6 @@
+# IntelliJ generated files
+.idea/
+jms-perf-client-lib.iml
+
+# Maven generated files
+target/
