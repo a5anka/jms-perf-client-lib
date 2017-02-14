@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.wso2.mb.testing;
+package org.wso2.mb.testing.util;
 
 import com.google.common.primitives.Longs;
 import org.apache.commons.lang.StringUtils;

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.wso2.mb.testing;
+package org.wso2.mb.testing.util;
 
 import javax.transaction.xa.Xid;
 

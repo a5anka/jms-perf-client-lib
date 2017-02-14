@@ -1,6 +1,8 @@
-package org.wso2.mb.testing;
+package org.wso2.mb.testing.sample;
 
 import org.apache.log4j.Logger;
+import org.wso2.mb.testing.util.JMSClientHelper;
+import org.wso2.mb.testing.util.TpsCalculator;
 
 import javax.jms.Destination;
 import javax.jms.MessageProducer;

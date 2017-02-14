@@ -1,4 +1,4 @@
-package org.wso2.mb.testing;
+package org.wso2.mb.testing.util;
 
 import java.util.concurrent.TimeUnit;
 
