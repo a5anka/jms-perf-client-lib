@@ -1,19 +1,11 @@
 package org.wso2.mb.testing.sample;
 
 import org.apache.log4j.Logger;
+import org.wso2.mb.testing.util.ConsumerThread;
 import org.wso2.mb.testing.util.JMSClientHelper;
-import org.wso2.mb.testing.util.TpsCalculator;
+import org.wso2.mb.testing.util.ProducerThread;
 
-import javax.jms.Destination;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.jms.XAConnection;
-import javax.jms.XAConnectionFactory;
-import javax.jms.XASession;
 import javax.naming.InitialContext;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
 
 public class JmsDtxPubSubClient {
 
@@ -30,54 +22,25 @@ public class JmsDtxPubSubClient {
     public static void main(String[] args) throws Exception {
 
         String queueName = "TestQueue";
+        int iterations = 100000;
+
         InitialContext initialContext = JMSClientHelper.createInitialContextBuilder("admin",
                                                                                     "admin",
                                                                                     "localhost",
                                                                                     5672)
                                                        .withQueue(queueName).build();
 
-        String content = JMSClientHelper.getContent(1);
 
-        XAConnectionFactory connectionFactory = (XAConnectionFactory) initialContext
-                .lookup(JMSClientHelper.QUEUE_CONNECTION_FACTORY);
+        Thread producerThread = ProducerThread.createProducerWithQueue(initialContext, queueName, 1, iterations);
+        producerThread.start();
 
-        XAConnection xaConnection = connectionFactory.createXAConnection();
-        XASession xaSession = xaConnection.createXASession();
+        Thread consumerThread = ConsumerThread.createConsumer(initialContext, queueName, iterations);
+        consumerThread.start();
 
-        XAResource xaResource = xaSession.getXAResource();
-        Session session = xaSession.getSession();
+        producerThread.join();
+        consumerThread.join();
 
-        Destination xaTestQueue = (Destination) initialContext.lookup(queueName);
-        session.createQueue(queueName);
-        MessageProducer producer = session.createProducer(xaTestQueue);
-
-        TextMessage textMessage = session.createTextMessage(content);
-        Xid xid = JMSClientHelper.getNewXid();
-
-        TpsCalculator tpsCalculator = new TpsCalculator();
-
-        tpsCalculator.start();
-
-        for (int i = 0; i < 2000; i++) {
-            xaResource.start(xid, XAResource.TMNOFLAGS);
-            producer.send(textMessage);
-            tpsCalculator.mark();
-            xaResource.end(xid, XAResource.TMSUCCESS);
-
-            int ret = xaResource.prepare(xid);
-
-            if (ret == XAResource.XA_OK) {
-                xaResource.commit(xid, false);
-            } else {
-                throw new Exception("Prepare failed");
-            }
-        }
-
-        tpsCalculator.stop();
-
-        session.close();
-        xaConnection.close();
-
-        LOGGER.info("Publisher TPS: " + tpsCalculator.getTps());
+        LOGGER.info("Test completed");
     }
+
 }

@@ -18,7 +18,6 @@ package org.wso2.mb.testing.util;
 import com.google.common.primitives.Longs;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.naming.Context;
@@ -57,7 +56,7 @@ public class JMSClientHelper {
             + "abcdefghijklmnopqrstuvwxyz0123456789\n"
             + "abcdefghijklmnopqrstuvwxyz0123456789\n"
             + "abcdefghijklmnopqrstuvwxyz0123456789\n"
-            + "abcdefghijklmnopqrstuvwx";
+            + "abcdefghijklmnopqrstuvwxy";
 
     /**
      * Queue connection factory name used
@@ -90,10 +89,8 @@ public class JMSClientHelper {
      *
      * @param sizeInKB size of the String in KB
      * @return content as String
-     * @throws IOException if error reading file
      */
-    public static String getContent(int sizeInKB) throws IOException {
-        System.out.println("Size of 1KB string. should be equal to 1024 : " + ONE_KB_STRING.length());
+    public static String getContent(int sizeInKB) {
         return StringUtils.repeat(ONE_KB_STRING, sizeInKB);
     }
 

@@ -1,7 +1,5 @@
 package org.wso2.mb.testing.util;
 
-import java.util.concurrent.TimeUnit;
-
 public class TpsCalculator {
     private enum State{
         RUNNING, STOPPED;
@@ -26,9 +24,9 @@ public class TpsCalculator {
     }
 
     public double getTps() {
-        if (currentState == State.RUNNING) {
+        if (currentState != State.RUNNING) {
             long duration = endTime - startTime;
-            return numberOfEvents * 1000 / TimeUnit.MILLISECONDS.toSeconds(duration);
+            return numberOfEvents * 1000 / duration;
         } else {
             throw new IllegalStateException(TpsCalculator.class + " should be stopped before calculating the TPS");
         }
